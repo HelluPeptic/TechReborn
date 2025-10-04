@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEntityTicker, ArmorRemoveHandler {
-	private static final Multimap<EntityAttribute, EntityAttributeModifier> FULL_SUIT = new AttributeModifierBuilder().armor(10).toughness(8).knockback(6).build();
+	private static final Multimap<EntityAttribute, EntityAttributeModifier> FULL_SUIT = new AttributeModifierBuilder()
+			.armor(10).toughness(8).knockback(6).build();
 	private final Multimap<EntityAttribute, EntityAttributeModifier> noPowerAttributes;
 	private final Multimap<EntityAttribute, EntityAttributeModifier> hasPowerAttributes;
 	private final Multimap<EntityAttribute, EntityAttributeModifier> fullSuitAttributes;
@@ -74,18 +75,17 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 				break;
 			case LEGGINGS: {
 				EntityAttributeModifier modifier = new EntityAttributeModifier(
-					TRArmourItem.MODIFIERS[1],
-					"Movement Speed",
-					0.15,
-					EntityAttributeModifier.Operation.ADDITION
-				);
+						TRArmourItem.MODIFIERS[1],
+						"Movement Speed",
+						0.15,
+						EntityAttributeModifier.Operation.ADDITION);
 				noPowerAttributes = new AttributeModifierBuilder(slot).armor(8).toughness(2).build();
 				hasPowerAttributes = new AttributeModifierBuilder(slot).armor(8).toughness(3).knockback(1).build();
 				hasPowerSprintAttributes = ImmutableListMultimap.<EntityAttribute, EntityAttributeModifier>builder()
-					.putAll(hasPowerAttributes).put(EntityAttributes.GENERIC_MOVEMENT_SPEED, modifier).build();
+						.putAll(hasPowerAttributes).put(EntityAttributes.GENERIC_MOVEMENT_SPEED, modifier).build();
 				fullSuitAttributes = new AttributeModifierBuilder(slot).armor(10).toughness(5).knockback(3).build();
 				fullSuitSprintAttributes = ImmutableListMultimap.<EntityAttribute, EntityAttributeModifier>builder()
-					.putAll(fullSuitAttributes).put(EntityAttributes.GENERIC_MOVEMENT_SPEED, modifier).build();
+						.putAll(fullSuitAttributes).put(EntityAttributes.GENERIC_MOVEMENT_SPEED, modifier).build();
 				break;
 			}
 			default:
@@ -95,7 +95,9 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 
 	// TREnergyArmourItem
 	@Override
-	public long getEnergyMaxOutput() { return 0; }
+	public long getEnergyMaxOutput() {
+		return 0;
+	}
 
 	// ArmorItem
 	@Override
@@ -105,14 +107,16 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 
 	// FabricItem
 	@Override
-	public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot) {
+	public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(ItemStack stack,
+			EquipmentSlot equipmentSlot) {
 		if (equipmentSlot != this.getSlotType()) {
 			return ImmutableMultimap.of();
 		}
 		long energy = getStoredEnergy(stack);
 		if (energy > 0) {
 			NbtCompound nbt = stack.getOrCreateNbt();
-			if (equipmentSlot == EquipmentSlot.LEGS && TechRebornConfig.quantumSuitEnableSprint && nbt.getBoolean("isActive") && energy >= TechRebornConfig.quantumSuitSprintingCost) {
+			if (equipmentSlot == EquipmentSlot.LEGS && TechRebornConfig.quantumSuitEnableSprint
+					&& nbt.getBoolean("isActive") && energy >= TechRebornConfig.quantumSuitSprintingCost) {
 				if (nbt.contains("HideFlags")) {
 					return fullSuitSprintAttributes;
 				} else {
@@ -135,19 +139,22 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 		switch (this.getSlotType()) {
 			case HEAD -> {
 				// Water Breathing
-				if (playerEntity.isSubmergedInWater() && tryUseEnergy(stack, TechRebornConfig.quantumSuitBreathingCost)) {
+				if (playerEntity.isSubmergedInWater()
+						&& tryUseEnergy(stack, TechRebornConfig.quantumSuitBreathingCost)) {
 					playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 5, 1));
 				}
 
 				// Night Vision
 				if (nbt.getBoolean("isActive") && tryUseEnergy(stack, TechRebornConfig.suitNightVisionCost)) {
-					playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 220, 1, false, false));
+					playerEntity.addStatusEffect(
+							new StatusEffectInstance(StatusEffects.NIGHT_VISION, 220, 1, false, false));
 				} else {
 					playerEntity.removeStatusEffect(StatusEffects.NIGHT_VISION);
 				}
 			}
 			case CHEST -> {
-				if (TechRebornConfig.quantumSuitEnableFlight) {
+				// Flight disabled - quantum suit will not provide creative flight
+				if (false) { // Permanently disabled
 					if (getStoredEnergy(stack) > TechRebornConfig.quantumSuitFlyingCost) {
 						playerEntity.getAbilities().allowFlying = true;
 						playerEntity.sendAbilitiesUpdate();
@@ -167,13 +174,15 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 				}
 			}
 			case LEGS -> {
-				if (playerEntity.isSprinting() && nbt.getBoolean("isActive") && TechRebornConfig.quantumSuitEnableSprint) {
+				if (playerEntity.isSprinting() && nbt.getBoolean("isActive")
+						&& TechRebornConfig.quantumSuitEnableSprint) {
 					tryUseEnergy(stack, TechRebornConfig.quantumSuitSprintingCost);
 				}
 			}
 			case FEET -> {
 				if (playerEntity.isSwimming() && tryUseEnergy(stack, TechRebornConfig.quantumSuitSwimmingCost)) {
-					playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.DOLPHINS_GRACE, 5, 1, true, false));
+					playerEntity
+							.addStatusEffect(new StatusEffectInstance(StatusEffects.DOLPHINS_GRACE, 5, 1, true, false));
 				}
 			}
 		}
@@ -189,7 +198,9 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 	// ArmorRemoveHandler
 	@Override
 	public void onRemoved(PlayerEntity playerEntity) {
-		if (this.getSlotType() == EquipmentSlot.CHEST && TechRebornConfig.quantumSuitEnableFlight) {
+		// Flight removal disabled - no longer needed since flight is permanently
+		// disabled
+		if (false && this.getSlotType() == EquipmentSlot.CHEST && TechRebornConfig.quantumSuitEnableFlight) {
 			if (!playerEntity.isCreative() && !playerEntity.isSpectator()) {
 				playerEntity.getAbilities().allowFlying = false;
 				playerEntity.getAbilities().flying = false;
@@ -237,11 +248,10 @@ public class QuantumSuitItem extends TREnergyArmourItem implements ArmorBlockEnt
 					AttributeModifierBuilder.appendText(buffer, fullSuitAttributes, Formatting.BLUE);
 				} else {
 					AttributeModifierBuilder.appendText(
-						buffer,
-						this.getSlotType() == EquipmentSlot.LEGS && TechRebornConfig.quantumSuitEnableSprint && nbt.getBoolean("isActive") ?
-							hasPowerSprintAttributes : hasPowerAttributes,
-						Formatting.BLUE
-					);
+							buffer,
+							this.getSlotType() == EquipmentSlot.LEGS && TechRebornConfig.quantumSuitEnableSprint
+									&& nbt.getBoolean("isActive") ? hasPowerSprintAttributes : hasPowerAttributes,
+							Formatting.BLUE);
 					buffer.add(Text.empty());
 					buffer.add(Text.translatable("item.modifiers.full_suit").formatted(Formatting.YELLOW));
 					AttributeModifierBuilder.appendText(buffer, FULL_SUIT, Formatting.YELLOW);
