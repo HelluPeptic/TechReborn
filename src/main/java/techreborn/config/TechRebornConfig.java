@@ -296,7 +296,7 @@ public class TechRebornConfig {
 	public static boolean quantumSuitEnableSprint = true;
 
 	@Config(config = "items", category = "power", key = "quantumSuitEnableFlight", comment = "Enable Flight for Quantum Chest")
-	public static boolean quantumSuitEnableFlight = true;
+	public static boolean quantumSuitEnableFlight = false;
 
 	@Config(config = "items", category = "power", key = "quantumSuitDamageAbsorbCost", comment = "Quantum Suit Cost for Damage Absorbed")
 	public static double damageAbsorbCost = 10;
