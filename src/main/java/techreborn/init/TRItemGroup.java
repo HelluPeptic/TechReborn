@@ -480,7 +480,8 @@ public class TRItemGroup {
 			TRContent.Machine.PUMP,
 			TRContent.Machine.FLUID_REPLICATOR,
 			TRContent.Machine.FISHING_STATION);
-		entries.addAfter(Items.LODESTONE, TRContent.Machine.CHUNK_LOADER);
+		// Chunk loader disabled - cannot be acquired
+		//entries.addAfter(Items.LODESTONE, TRContent.Machine.CHUNK_LOADER);
 		entries.addAfter(Items.BEEHIVE, TRContent.Machine.GREENHOUSE_CONTROLLER);
 		entries.addAfter(Items.LIGHTNING_ROD, TRContent.Machine.LIGHTNING_ROD);
 		// inventory stuff
